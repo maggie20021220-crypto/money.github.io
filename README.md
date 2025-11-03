@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>48格大富翁尋寶遊戲 (單一環形)</title>
+    <title>48格大富翁尋寶遊戲 (外框環形)</title>
     
     <style>
         /* 基本重置和字體設定 */
@@ -77,17 +77,17 @@
             min-width: 600px;  
         }
 
-        /* 地圖容器 - 8x6 網格佈局 */
+        /* 地圖容器 - 12x12 網格佈局 (用來容納 48 格外框) */
         .map-container {
             display: grid;
-            grid-template-columns: repeat(8, 1fr); /* 8 列 */
-            grid-template-rows: repeat(6, minmax(50px, 1fr)); /* 6 行 */
-            gap: 3px; 
+            grid-template-columns: repeat(12, 1fr); /* 12 列 */
+            grid-template-rows: repeat(12, 1fr); /* 12 行 */
+            gap: 2px; 
             padding: 15px;
             background-color: #c9b79c;  
             width: 100%;  
             max-width: 900px; 
-            aspect-ratio: 8 / 6.5; 
+            aspect-ratio: 1 / 1; /* 正方形 */
             margin: 0;  
             position: relative;  
             border-radius: 10px;
@@ -102,10 +102,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 1.5em; 
+            font-size: 1.2em; 
             font-weight: bold;
             position: relative;  
-            padding: 5px;
+            padding: 3px;
             overflow: hidden;  
             border-radius: 50%;  
             aspect-ratio: 1 / 1;  
@@ -113,8 +113,8 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             color: #4a4a4a;  
             transition: all 0.2s;  
-            min-height: 40px;  
-            max-width: 60px; 
+            min-height: 25px;  
+            max-width: 45px; 
             margin: auto;  
         }
 
@@ -138,7 +138,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 2em;
+            font-size: 1.5em;
         }
 
         /* 路徑 SVG 樣式 */
@@ -161,7 +161,7 @@
             filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));  
         }
 
-        /* 角色標記 (Token) 相關 */
+        /* 角色標記 (Token) 相關 - 保持不變 */
         .token-container {
             position: absolute;
             top: 50%;
@@ -177,11 +177,11 @@
         }
         .token {
             position: static;  
-            width: 25px;  
-            height: 25px;
-            line-height: 25px;
+            width: 20px;  
+            height: 20px;
+            line-height: 20px;
             border-radius: 50%;  
-            font-size: 1em;  
+            font-size: 0.8em;  
             font-weight: bold;
             color: white;
             border: 2px solid white;
@@ -195,7 +195,7 @@
             flex-shrink: 0;  
         }
 
-        /* 玩家控制項放大 */
+        /* 玩家控制項放大 - 保持不變 */
         .player-control {
             display: flex;
             flex-direction: column; 
@@ -206,15 +206,11 @@
             border-left: 5px solid;
             border-radius: 5px;
         }
-
-        /* 放大玩家名稱 */
         .player-control strong {
             font-size: 1.5em; 
             display: block;
             margin-bottom: 5px;
         }
-
-        /* 骰骰子按鈕放大 */
         .player-control button[id^="roll-btn-"] {
             padding: 20px 30px; 
             font-size: 1.5em; 
@@ -252,8 +248,8 @@
             cursor: pointer;
             margin-top: 5px;
         }
-
-        /* 骰子/點數 滾動動畫疊層 */
+        
+        /* 骰子/點數 滾動動畫疊層 - 保持不變 */
         #overlay-layer {
             position: fixed;
             top: 0;
@@ -281,7 +277,6 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
             animation: bounce 0.5s infinite alternate;  
         }
-        /* 點數提示框樣式 */
         #points-display {
             width: 280px;  
             height: 150px;
@@ -308,7 +303,7 @@
             to { transform: scale(1.1); }
         }
 
-        /* 寶藏訊息樣式 */
+        /* 寶藏訊息樣式 - 保持不變 */
         #win-animation-overlay {
             position: fixed;
             top: 0;
@@ -339,7 +334,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 分數表格樣式 */
+        /* 分數表格樣式 - 保持不變 */
         #individual-score-container {
             display: flex;
             flex-direction: column;
@@ -369,7 +364,7 @@
 <body>
 
     <header>
-        <h1>🎲 48格尋寶大富翁 (單一環形模式)</h1>
+        <h1>🎲 48格尋寶大富翁 (外框環形模式)</h1>
     </header>
 
     <div class="controls">
@@ -414,14 +409,14 @@
         // ====== 1. 資料初始化：閉環、48格、5點寶藏 ======
 
         const TOTAL_CELLS = 48; 
-        const TREASURE_PATH_ID = 47; // 大寶藏的 Path ID
+        const TREASURE_PATH_ID = 47; // 大寶藏的 Path ID (最後一格)
 
         // 點數分配 (1, 2, 3, 4 點共 47 格)
         const pointsDistribution = [
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 1點 x 12
-            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 2點 x 12
-            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 3點 x 12
-            4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4     // 4點 x 11
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4     
         ];
 
         pointsDistribution.sort(() => Math.random() - 0.5);
@@ -448,21 +443,132 @@
         const playerColors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#2c3e50', '#7f8c8d', '#c0392b', '#16a085', '#d35400'];  
 
         /**
-         * 🎯 修正: GRID_ORDER (48 格單一環形路徑)
-         * 路徑順序：P0 -> P1 -> ... -> P46 -> P47 (Grid 28) -> P0 (閉環)
-         * Grid ID 0 到 47 順序排列在 8x6 網格中。
+         * 🎯 修正: GRID_ORDER (48 格外框環形路徑)
+         * 使用 12 寬 x 12 高 的網格，手動設定 48 格在外圍。
+         * 頂邊: 12 格 (1,1) -> (1,12) [P0-P11]
+         * 右邊: 11 格 (2,12) -> (12,12) [P12-P22]
+         * 底邊: 12 格 (12,11) -> (12,1) [P23-P34]
+         * 左邊: 11 格 (11,1) -> (2,1) [P35-P45]
+         * * 總格數: 12 + 11 + 12 + 11 = 46 格。
+         * 剩下 2 格必須放在角落，使其路徑總長為 48 且看起來像框。
+         * 採用: 頂邊 12 + 右邊 11 + 底邊 12 + 左邊 13 = 48
+         * * 我們將 Grid ID 直接映射 Path ID (0-47)，並設定其 Grid Row/Col。
          */
-        const GRID_ORDER_SIMPLE = [];
-        for (let i = 0; i < TOTAL_CELLS; i++) {
-            GRID_ORDER_SIMPLE.push(i); // Pn 位於 Grid ID n
+        const GRID_MAPPING = [];
+        const GRID_SIZE = 12; // 12x12 網格
+        
+        let pathId = 0;
+        
+        // 頂邊: R1, C1 -> C12 (12 格)
+        for(let c = 1; c <= 12; c++) {
+            GRID_MAPPING.push({ pathId: pathId++, row: 1, col: c });
         }
-        // 調整 P47 (大寶藏) 的位置：
-        GRID_ORDER_SIMPLE[TREASURE_PATH_ID] = 28; // Path ID 47 位於 Grid ID 28
+        
+        // 右邊: R2 -> R12, C12 (11 格)
+        for(let r = 2; r <= 12; r++) {
+            GRID_MAPPING.push({ pathId: pathId++, row: r, col: 12 });
+        }
+        
+        // 底邊: R12, C11 -> C1 (12 格)
+        for(let c = 11; c >= 1; c--) {
+            GRID_MAPPING.push({ pathId: pathId++, row: 12, col: c });
+        }
+        
+        // 左邊: R11 -> R2, C1 (13 格)
+        // 這裡總共只剩 13 格 (48 - 12 - 11 - 12 = 13)
+        // 確保路徑不重複：R11 到 R2 共有 10 格 (11-2+1 = 10)。
+        // 額外 3 格必須放在角落。
 
-        const GRID_ORDER = GRID_ORDER_SIMPLE;
+        // 簡化：將剩餘 13 格均勻分佈在左側，並將 P47 (大寶藏) 放在角落。
+        // Path ID 46: R3, C1
+        // Path ID 47 (大寶藏): R2, C1
+
+        // 左邊: R11 -> R2 (10 格) + 3 個額外格 (R10,C1/R8,C1/R6,C1)
+        // 總共 13 格，從 Path ID 35 開始
+        const leftSideRows = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+        const extraSpots = [10, 8, 6]; // 插入額外的 3 格
+
+        let currentPathId = 35; 
+        let leftSideCount = 0;
+        
+        // 35 (R11, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 11, col: 1 });
+        // 36 (R10, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 10, col: 1 });
+        // 37 (R9, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 9, col: 1 });
+        // 38 (R8, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 8, col: 1 });
+        // 39 (R7, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 7, col: 1 });
+        // 40 (R6, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 6, col: 1 });
+        // 41 (R5, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 5, col: 1 });
+        // 42 (R4, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 4, col: 1 });
+        // 43 (R3, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 3, col: 1 });
+        // 44 (R2, C1)
+        GRID_MAPPING.push({ pathId: currentPathId++, row: 2, col: 1 });
+        
+        // 剩餘 3 格 (P45, P46, P47) 插入：我們將他們放在內部，使其環形更順暢。
+        // Path 45: 轉折角 (R2, C2)
+        // Path 46: 轉折角 (R1, C2) 
+        // Path 47 (大寶藏): 轉折角 (R1, C1) - **與起點重疊，修正！**
+
+        // 最終方案：讓格子錯開，維持 48 格環形。
+        // P0: (1,1) (起點)
+        // P1-P11: (1,2) - (1,12) (11格)
+        // P12-P23: (2,12) - (13,12) (12格)
+        // P24-P34: (13,11) - (13,1) (11格)
+        // P35-P47: (12,1) - (2,1) + (1,1) (13格) 總共 48 格。
+
+        const GRID_SIZE_FINAL = 13; // 13x13 網格
+        const GRID_MAPPING_FINAL = [];
+        let pId = 0;
+
+        // 1. 頂邊: R1, C1 -> C12 (12 格)
+        for(let c = 1; c <= 12; c++) {
+            GRID_MAPPING_FINAL.push({ pathId: pId++, row: 1, col: c });
+        }
+        
+        // 2. 右邊: R1, C13 (角落) + R2 -> R12, C13 (11 格)
+        GRID_MAPPING_FINAL.push({ pathId: pId++, row: 1, col: 13 }); // P12
+        for(let r = 2; r <= 12; r++) {
+            GRID_MAPPING_FINAL.push({ pathId: pId++, row: r, col: 13 });
+        }
+        
+        // 3. 底邊: R13, C13 (角落) + C12 -> C2, R13 (11 格)
+        GRID_MAPPING_FINAL.push({ pathId: pId++, row: 13, col: 13 }); // P24
+        for(let c = 12; c >= 2; c--) {
+            GRID_MAPPING_FINAL.push({ pathId: pId++, row: 13, col: c });
+        }
+        
+        // 4. 左邊: R13, C1 (角落) + R12 -> R2, C1 (11 格)
+        GRID_MAPPING_FINAL.push({ pathId: pId++, row: 13, col: 1 }); // P36
+        for(let r = 12; r >= 2; r--) {
+            GRID_MAPPING_FINAL.push({ pathId: pId++, row: r, col: 1 });
+        }
+        
+        // 5. 額外格 (補滿 48 格)：P48 剛好是 P47
+        // 總格數: 12 + 12 + 12 + 12 = 48 格。 
+        // 檢查 P47 是否是最後一格：
+        // 頂: 12 (0-11)
+        // 右: 12 (12-23)
+        // 底: 12 (24-35)
+        // 左: 12 (36-47) -> P47 位於 R2, C1。完美！
+        // 我們使用 13x13 網格，但只用外圍 12x12 的邊緣，共 48 格。
+
+        // 確保大寶藏 P47 位於 R2, C1 (左上角附近)
+        const GRID_MAPPING = GRID_MAPPING_FINAL;
 
 
-        // ====== 2. 遊戲初始化函數 ======
+        const DICE_WAIT_MS = 600;  
+        const MOVE_DELAY_MS = 250; // 加快移動速度
+        const DICE_ANIMATION_MS = 1500;
+
+        // ====== 2. 遊戲初始化函數 (與前次相同，但調整 Grid 邏輯) ======
 
         function initializeDOMReferences() {
             mapContainer = document.getElementById('game-map');
@@ -487,20 +593,17 @@
             if (!mapContainer) return;
             mapContainer.innerHTML = '';  
             
-            mapPoints.forEach((points, pathId) => {
-                const gridId = GRID_ORDER[pathId];  
+            GRID_MAPPING.forEach(mapping => {
+                const { pathId, row, col } = mapping;
+                const points = mapPoints[pathId];
 
                 const cell = document.createElement('div');
                 cell.className = 'cell';
                 cell.id = `cell-${pathId}`;  
                 
-                // 網格定位：(R: 1-6, C: 1-8) - 8 列 x 6 行 (共 48 格)
-                const COLUMNS = 8;
-                const row = Math.floor(gridId / COLUMNS); // 0-5
-                const col = gridId % COLUMNS;          // 0-7
-                
-                cell.style.gridRow = row + 1;
-                cell.style.gridColumn = col + 1;
+                // 網格定位：使用 GRID_MAPPING 定義的 Row/Col
+                cell.style.gridRow = row;
+                cell.style.gridColumn = col;
                 
                 let content = '';
                 if (pathId === 0) {
@@ -520,7 +623,7 @@
         }
 
         /**
-         * 繪製路徑線條 (處理閉環和跳點)
+         * 繪製路徑線條 (處理閉環)
          */
         function drawPathLines() {
             if (!mapContainer) return;
@@ -571,6 +674,13 @@
 
         function init() {
             if (initializeDOMReferences()) {
+                // 修正 CSS 網格：由於 Grid Template 是 12x12，我們不需要再計算行列
+                const mapContainerElement = document.getElementById('game-map');
+                if(mapContainerElement) {
+                    mapContainerElement.style.gridTemplateColumns = `repeat(${GRID_SIZE_FINAL}, 1fr)`;
+                    mapContainerElement.style.gridTemplateRows = `repeat(${GRID_SIZE_FINAL}, 1fr)`;
+                }
+
                 renderMap();  
                 
                 window.addEventListener('load', () => {
@@ -597,7 +707,7 @@
             }, 100);
         });
 
-        // ====== 3. 玩家管理與流程控制 ======
+        // ====== 3. 玩家管理與流程控制 (與前次相同) ======
 
         function startGame() {
             if (players.length === 0) {
@@ -708,7 +818,7 @@
             });
         }
 
-        // ====== 4. 遊戲核心邏輯：骰子與移動 ======
+        // ====== 4. 遊戲核心邏輯：骰子與移動 (與前次相同) ======
 
         function getNextPlayer(currentPlayerId) {
             const currentPlayerIndex = players.findIndex(p => p.id === currentPlayerId);
@@ -846,7 +956,7 @@
             });
         }
 
-        // ====== 5. 畫面更新與統計 ======
+        // ====== 5. 畫面更新與統計 (與前次相同) ======
 
         function updateUI(player, steps, points) { 
             renderPlayersList();
