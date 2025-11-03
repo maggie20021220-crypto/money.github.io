@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>48格大富翁尋寶遊戲 (閉環)</title>
+    <title>48格大富翁尋寶遊戲 (單一環形)</title>
     
     <style>
         /* 基本重置和字體設定 */
@@ -57,7 +57,7 @@
         }
 
         .side-panel {
-            width: 280px; /* 略微放大側邊欄 */
+            width: 280px; 
             background-color: #fff;
             border: 3px solid #a07a4a;
             border-radius: 8px;
@@ -67,8 +67,6 @@
             flex-direction: column;
             overflow-y: auto;  
         }
-        #players-list-container { order: 1; }
-        #score-info-container { order: 3; }
 
         .center-map-area {
             flex: 1;  
@@ -79,44 +77,24 @@
             min-width: 600px;  
         }
 
-        /* 地圖容器 - 8x6 網格佈局 🎯 修正處 */
+        /* 地圖容器 - 8x6 網格佈局 */
         .map-container {
             display: grid;
-            grid-template-columns: repeat(8, 1fr); /* 修正: 8 列 */
-            grid-template-rows: repeat(6, minmax(50px, 1fr)); /* 修正: 6 行 */
-            gap: 3px; /* 略微減少間距 */
+            grid-template-columns: repeat(8, 1fr); /* 8 列 */
+            grid-template-rows: repeat(6, minmax(50px, 1fr)); /* 6 行 */
+            gap: 3px; 
             padding: 15px;
             background-color: #c9b79c;  
             width: 100%;  
-            max-width: 900px; /* 增加最大寬度 */
-            aspect-ratio: 8 / 6.5; /* 調整比例 */
+            max-width: 900px; 
+            aspect-ratio: 8 / 6.5; 
             margin: 0;  
             position: relative;  
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);  
         }
 
-        /* 地圖背景圖案 (保持不變) */
-        .map-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;  
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' alignment-baseline='middle'%3E%F0%9F%8C%B4%3C/text%3E%3C/svg%3E"),  
-                                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' alignment-baseline='middle'%3E%F0%9F%92%B0%3C/text%3E%3C/svg%3E"),
-                                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ctext x='50%25' y='50%25' font-size='30' text-anchor='middle' alignment-baseline='middle'%3E%E2%98%A0%EF%B8%8F%3C/text%3E%3C/svg%3E");
-            background-repeat: repeat;
-            background-size: 100px 100px, 120px 120px, 80px 80px;
-            background-position: 0 0, 50px 50px, 25px 25px;
-            opacity: 0.15;
-            filter: sepia(0.8) grayscale(0.5);  
-        }
-
-        /* 地圖格子樣式 🎯 修正處 */
+        /* 地圖格子樣式 */
         .cell {
             border: 2px solid #6b4c3b;  
             background-color: #f7e0b5;  
@@ -124,7 +102,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 1.5em; /* 縮小字體以適應更多格子 */
+            font-size: 1.5em; 
             font-weight: bold;
             position: relative;  
             padding: 5px;
@@ -136,7 +114,7 @@
             color: #4a4a4a;  
             transition: all 0.2s;  
             min-height: 40px;  
-            max-width: 60px; /* 減少最大寬度 */
+            max-width: 60px; 
             margin: auto;  
         }
 
@@ -144,10 +122,10 @@
         .cell-points-1 { background-color: #c8e6c9; }  
         .cell-points-2 { background-color: #fff9c4; }  
         .cell-points-3 { background-color: #ffccbc; }  
-        .cell-points-4 { background-color: #fbd6ac; } /* 新增 4 點顏色 */
-        .cell-points-5 { background-color: #ffe082; } /* 🎯 5 點 (大寶藏) 顏色 */
+        .cell-points-4 { background-color: #fbd6ac; } 
+        .cell-points-5 { background-color: #ffe082; } /* 5 點 (大寶藏) 顏色 */
 
-        /* 終點寶藏箱樣式 (Path ID 47) 🎯 修正處 */
+        /* 終點寶藏箱樣式 (Path ID 47 / Grid ID 28) */
         #cell-47 { 
             background-color: gold;  
             font-size: 2.2em;  
@@ -163,7 +141,7 @@
             font-size: 2em;
         }
 
-        /* 路徑 SVG 樣式 - 確保直角 (保持不變) */
+        /* 路徑 SVG 樣式 */
         .path-svg {
             position: absolute;
             top: 0;
@@ -183,7 +161,7 @@
             filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));  
         }
 
-        /* 角色標記 (Token) 相關 (保持不變) */
+        /* 角色標記 (Token) 相關 */
         .token-container {
             position: absolute;
             top: 50%;
@@ -217,36 +195,29 @@
             flex-shrink: 0;  
         }
 
-        /* 玩家控制項放大 🎯 修正處 */
+        /* 玩家控制項放大 */
         .player-control {
             display: flex;
-            flex-direction: column; /* 垂直堆疊 */
+            flex-direction: column; 
             align-items: flex-start;
-            gap: 10px; /* 增加間距 */
+            gap: 10px; 
             padding: 15px 10px;
-            font-size: 1.2em; /* 放大整個控制區的基礎字體 */
+            font-size: 1.2em; 
+            border-left: 5px solid;
             border-radius: 5px;
         }
 
         /* 放大玩家名稱 */
         .player-control strong {
-            font-size: 1.5em; /* 讓玩家名稱更突出 */
+            font-size: 1.5em; 
             display: block;
             margin-bottom: 5px;
         }
 
-        /* 骰骰子按鈕放大 🎯 修正處 */
-        .player-control button {
-            padding: 10px 15px; 
-            font-size: 1em;     
-            border-radius: 8px; 
-            cursor: pointer;
-            margin-top: 5px;
-            transition: all 0.2s;
-        }
+        /* 骰骰子按鈕放大 */
         .player-control button[id^="roll-btn-"] {
-            padding: 20px 30px; /* 進一步放大 */
-            font-size: 1.5em; /* 進一步放大 */
+            padding: 20px 30px; 
+            font-size: 1.5em; 
             font-weight: bold;
             min-width: 150px; 
             background-color: #e74c3c;
@@ -254,6 +225,10 @@
             border: 3px solid #c0392b;
             box-shadow: 0 4px #c0392b;
             transform: translateY(0);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: all 0.2s;
         }
         .player-control button[id^="roll-btn-"]:active {
             box-shadow: 0 2px #c0392b;
@@ -267,16 +242,18 @@
             cursor: not-allowed;
             transform: translateY(0);
         }
-        /* 放大移除按鈕 */
         .player-control button.remove-player-btn {
             padding: 10px 15px;
             font-size: 1.1em;
             background-color: #f1f1f1;
             color: #7f8c8d;
             border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 5px;
         }
-        
-        /* 骰子/點數 滾動動畫疊層 (保持不變) */
+
+        /* 骰子/點數 滾動動畫疊層 */
         #overlay-layer {
             position: fixed;
             top: 0;
@@ -284,7 +261,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);  
-            display: none; /* 初始隱藏 */
+            display: none; 
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -304,7 +281,7 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
             animation: bounce 0.5s infinite alternate;  
         }
-        /* 點數提示框樣式 (保持不變) */
+        /* 點數提示框樣式 */
         #points-display {
             width: 280px;  
             height: 150px;
@@ -331,7 +308,7 @@
             to { transform: scale(1.1); }
         }
 
-        /* 獲勝動畫樣式 (修改為寶藏訊息) */
+        /* 寶藏訊息樣式 */
         #win-animation-overlay {
             position: fixed;
             top: 0;
@@ -339,7 +316,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
-            display: none; /* 初始隱藏 */
+            display: none; 
             justify-content: center;
             align-items: center;
             z-index: 200;  
@@ -368,11 +345,10 @@
             flex-direction: column;
             gap: 15px;
             padding: 10px;
-            /* 讓表格靠左對齊，保持整潔 */
             align-items: flex-start; 
         }
         #individual-score-container h3 {
-             font-size: 1.5em; /* 放大標題 */
+             font-size: 1.5em; 
              padding: 10px 0 5px 0;
         }
         .player-score-table {
@@ -388,13 +364,12 @@
         .player-score-table thead th {
             font-size: 1.1em;
         }
-
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎲 48格尋寶大富翁 (閉環模式)</h1>
+        <h1>🎲 48格尋寶大富翁 (單一環形模式)</h1>
     </header>
 
     <div class="controls">
@@ -436,11 +411,11 @@
 
 
     <script>
-        // ====== 1. 資料初始化 🎯 核心修正處 ======
+        // ====== 1. 資料初始化：閉環、48格、5點寶藏 ======
 
         const TOTAL_CELLS = 48; 
         const TREASURE_PATH_ID = 47; // 大寶藏的 Path ID
-        
+
         // 點數分配 (1, 2, 3, 4 點共 47 格)
         const pointsDistribution = [
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 1點 x 12
@@ -449,10 +424,8 @@
             4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4     // 4點 x 11
         ];
 
-        // 隨機洗牌點數
         pointsDistribution.sort(() => Math.random() - 0.5);
 
-        // 最終 mapPoints 陣列 (總長度 48)
         const mapPoints = new Array(TOTAL_CELLS).fill(0);
         for (let i = 0; i < TOTAL_CELLS - 1; i++) {
             mapPoints[i] = pointsDistribution[i];
@@ -475,27 +448,18 @@
         const playerColors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#2c3e50', '#7f8c8d', '#c0392b', '#16a085', '#d35400'];  
 
         /**
-         * 🎯 修正: GRID_ORDER 陣列長度為 48，採用 8x6 閉環螺旋路徑 (回字形)，
-         * 確保 Path ID 47 (大寶藏) 位於 Grid ID 28，路徑無交叉。
-         * 路徑設計：R1->, C8 Down, R6 <-, C1 Up, R2 ->, C7 Down, R5 <-, C2 Up, R3 ->, R4 <- (終點)
+         * 🎯 修正: GRID_ORDER (48 格單一環形路徑)
+         * 路徑順序：P0 -> P1 -> ... -> P46 -> P47 (Grid 28) -> P0 (閉環)
+         * Grid ID 0 到 47 順序排列在 8x6 網格中。
          */
-        const GRID_ORDER = [
-            // 外環 (Path 0 - 23)
-            0, 1, 2, 3, 4, 5, 6, 7,        // R1 -> (P0-7)
-            15, 23, 31, 39, 47,            // C8 Down (P8-12)
-            46, 45, 44, 43, 42, 41, 40,    // R6 <- (P13-19)
-            32, 24, 16, 8,                 // C1 Up (P20-23)
-            
-            // 內環 (Path 24 - 47)
-            9, 10, 11, 12, 13, 14,         // R2 -> (P24-29)
-            22, 30, 38,                    // C7 Down (P30-32)
-            37, 36, 35, 34,                // R5 <- (P33-36)
-            26, 18,                        // C2 Up (P37-38)
-            17, 19, 20, 21,                // R3 -> (P39-42)
-            29, 30, 31, 32, 33, 27,        // R4 <- (P43-46) 修正後的閉環路徑
-            
-            28                             // 🎯 P47 (大寶藏) 位於 Grid ID 28
-        ];
+        const GRID_ORDER_SIMPLE = [];
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+            GRID_ORDER_SIMPLE.push(i); // Pn 位於 Grid ID n
+        }
+        // 調整 P47 (大寶藏) 的位置：
+        GRID_ORDER_SIMPLE[TREASURE_PATH_ID] = 28; // Path ID 47 位於 Grid ID 28
+
+        const GRID_ORDER = GRID_ORDER_SIMPLE;
 
 
         // ====== 2. 遊戲初始化函數 ======
@@ -503,7 +467,7 @@
         function initializeDOMReferences() {
             mapContainer = document.getElementById('game-map');
             playersList = document.getElementById('players-list');
-            individualScoreContainer = document.getElementById('individual-score-container');
+            individualScoreContainer = document.getElementById('score-info-container');
             playerNameInput = document.getElementById('playerNameInput');
             startGameButton = document.getElementById('startGameButton');
             winOverlay = document.getElementById('win-animation-overlay');  
@@ -511,7 +475,6 @@
             overlayLayer = document.getElementById('overlay-layer');
             displayContent = document.getElementById('display-content');
 
-            // 設置全局函數 (確保按鈕點擊事件有效)
             window.addPlayer = addPlayer;
             window.startGame = startGame;
             window.playerRoll = playerRoll;
@@ -531,10 +494,10 @@
                 cell.className = 'cell';
                 cell.id = `cell-${pathId}`;  
                 
-                // 網格定位：(R: 1-6, C: 1-8)
+                // 網格定位：(R: 1-6, C: 1-8) - 8 列 x 6 行 (共 48 格)
                 const COLUMNS = 8;
-                const row = Math.floor(gridId / COLUMNS);
-                const col = gridId % COLUMNS;
+                const row = Math.floor(gridId / COLUMNS); // 0-5
+                const col = gridId % COLUMNS;          // 0-7
                 
                 cell.style.gridRow = row + 1;
                 cell.style.gridColumn = col + 1;
@@ -542,10 +505,10 @@
                 let content = '';
                 if (pathId === 0) {
                     content = '⭐'; // 起點
-                } else if (pathId === TREASURE_PATH_ID) { // 🎯 修正: 檢查大寶藏 ID
-                    content = ''; // 終點 (Path ID 47)
+                } else if (pathId === TREASURE_PATH_ID) { 
+                    content = ''; 
                     cell.classList.add('treasure-box');
-                    cell.classList.add(`cell-points-5`); // 特殊顏色標記
+                    cell.classList.add(`cell-points-5`); 
                 } else {
                     content = points.toString();  
                     cell.classList.add(`cell-points-${points}`);  
@@ -557,7 +520,7 @@
         }
 
         /**
-         * 繪製路徑線條 (保持不變)
+         * 繪製路徑線條 (處理閉環和跳點)
          */
         function drawPathLines() {
             if (!mapContainer) return;
@@ -576,7 +539,7 @@
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             let dAttribute = '';
             
-            for (let i = 0; i < TOTAL_CELLS; i++) { // 🎯 修正: 遍歷所有 48 格
+            for (let i = 0; i < TOTAL_CELLS; i++) { // P0 -> P1 -> ... -> P47
                 const currentCell = document.getElementById(`cell-${i}`);
 
                 if (currentCell) {
@@ -593,15 +556,14 @@
                 }
             }
             
-            // 🎯 閉環處理：將 P47 連回 P0
+            // 🎯 閉環處理：將 Path ID 47 連回 Path ID 0
             const startCell = document.getElementById(`cell-0`);
             if (startCell) {
                 const startRect = startCell.getBoundingClientRect();
                 const startX = (startRect.left + startRect.right) / 2 - mapRect.left;
                 const startY = (startRect.top + startRect.bottom) / 2 - mapRect.top;
-                dAttribute += `L ${startX} ${startY} `; // 連接終點到起點
+                dAttribute += `L ${startX} ${startY} `; 
             }
-
 
             path.setAttribute('d', dAttribute.trim());
             svg.appendChild(path);
@@ -645,7 +607,6 @@
             gameStarted = true;
             startGameButton.disabled = true;  
             disableAllRollButtons(false);
-            // 確保第一個玩家可以擲骰子
             if (players.length > 0) {
                 document.getElementById(`roll-btn-${players[0].id}`).disabled = false;
             }
@@ -659,7 +620,6 @@
                 alert("請輸入有效名字或玩家數量已達上限！");
                 return;
             }
-            // 確保玩家名稱不重複
             if (players.some(p => p.name === name)) {
                 alert("玩家名稱已存在，請使用不同名稱！");
                 return;
@@ -710,7 +670,7 @@
             if (scoreBox) scoreBox.remove();
             
             const token = document.querySelector(`.token[data-player-id="${playerId}"]`);
-            if (token) token.closest('.token-container').remove(); // 移除整個容器
+            if (token) token.closest('.token-container').remove(); 
 
             renderPlayersList();
             if (players.length === 0) {
@@ -771,15 +731,13 @@
         }
 
         function hideOverlay() {
-            // 只有在顯示點數提示時才允許手動關閉
             const contentDiv = displayContent.querySelector('#points-display');
             if (overlayLayer.style.display === 'flex' && isAnimationActive && contentDiv) {
                 overlayLayer.style.display = 'none';
                 displayContent.innerHTML = '';
                 isAnimationActive = false;
                 
-                // 輪到下一位玩家
-                const currentPlayer = players.find(p => p.id === contentDiv.dataset.playerId);
+                const currentPlayer = players.find(p => p.id === parseInt(contentDiv.dataset.playerId));
                 if (currentPlayer) {
                     const nextPlayer = getNextPlayer(currentPlayer.id);
                     if (nextPlayer) {
@@ -811,19 +769,18 @@
             }, DICE_ANIMATION_MS); 
         }
 
-        function showPointsAnimation(player, points) { // 🎯 傳入 player 參數
+        function showPointsAnimation(player, points) { 
             let message = '';
             if (player.position === TREASURE_PATH_ID) {
-                 message = `🎉 找到寶藏！<br>最終點數：<strong>${points}</strong>`;
+                message = `🎉 找到寶藏！<br>最終點數：<strong>${points}</strong>`;
             } else {
-                 message = `最終點數：<br><strong>${points}</strong>`;
+                message = `最終點數：<br><strong>${points}</strong>`;
             }
             
             const pointsHtml = `<div id="points-display" data-player-id="${player.id}">${message}</div>`;
-            showOverlay(pointsHtml, true); // true 意味著需要手動點擊或定時器關閉
+            showOverlay(pointsHtml, true); 
         }
-        
-        // 🎯 新增: 顯示找到寶藏的訊息 (取代 showWinAnimation 的功能)
+
         function showTreasureFound(player) {
             if (!winOverlay) return;
 
@@ -834,7 +791,6 @@
             
             setTimeout(() => {
                 winOverlay.style.display = 'none';
-                // 3秒後自動關閉寶藏訊息，但保留點數提示（需要手動點擊）
             }, 3000); 
         }
 
@@ -845,7 +801,6 @@
                 return;
             }
             
-            // 🎯 修正: 閉環移動
             let nextPosition = (player.position + 1) % TOTAL_CELLS; 
             
             player.position = nextPosition;
@@ -864,19 +819,15 @@
 
             const steps = Math.floor(Math.random() * 6) + 1; 
             
-            // 🎯 修正: 閉環最終位置
             const finalPosition = (player.position + steps) % TOTAL_CELLS;
 
             isAnimationActive = true;
             disableAllRollButtons(true); 
 
-            // 1. 顯示骰子動畫
             showDiceAnimation(steps, () => {
                 
-                // 2. 開始逐步移動
                 moveTokenSequentially(player, steps, finalPosition, () => {
                     
-                    // 3. 移動結束後，計算分數並更新 UI
                     const newPosition = player.position;
                     const finalPoints = mapPoints[newPosition];
                     
@@ -884,18 +835,13 @@
                     player.currentTotalSteps += steps;
 
                     recordPlayerTurn(player, steps, finalPoints);
-                    // 🎯 修正: 不再傳遞 isFinished
                     updateUI(player, steps, finalPoints); 
                     
-                    // 4. 顯示點數提示 (需手動關閉)
-                    showPointsAnimation(player, finalPoints); // 傳入 player
+                    showPointsAnimation(player, finalPoints); 
                     
-                    // 5. 🎯 新增: 處理大寶藏到達事件
                     if (newPosition === TREASURE_PATH_ID) {
                         showTreasureFound(player); 
                     }
-                    
-                    // 注意：hideOverlay 中將處理輪換到下一位玩家的邏輯
                 }); 
             });
         }
@@ -903,7 +849,6 @@
         // ====== 5. 畫面更新與統計 ======
 
         function updateUI(player, steps, points) { 
-            // 🎯 移除所有終點相關的 UI 邏輯
             renderPlayersList();
         }
 
@@ -911,7 +856,6 @@
             const targetCell = document.getElementById(`cell-${player.position}`);
             if (!targetCell) return;
             
-            // 1. 移除舊的 token
             const oldToken = document.querySelector(`.token[data-player-id="${player.id}"]`);
             if (oldToken) {
                 const container = oldToken.closest('.token-container');
@@ -921,7 +865,6 @@
                 }
             }
 
-            // 2. 尋找或創建 token-container
             let container = targetCell.querySelector('.token-container');
             if (!container) {
                 container = document.createElement('div');
@@ -929,7 +872,6 @@
                 targetCell.appendChild(container);
             }
             
-            // 3. 創建並放置新的 token
             const token = document.createElement('div');
             token.className = 'token';
             token.setAttribute('data-player-id', player.id);
@@ -955,7 +897,7 @@
             
             table.innerHTML = `
                 <thead>
-                    <tr><th colspan="2" style="background-color: ${player.color}; color: white; text-align: center;">${player.name} (${player.emoji}) 的回合記錄 (總步數: 0, 總點數: 0)</th></tr>
+                    <tr><th colspan="2" style="background-color: ${player.color}; color: white; text-align: center;">${player.name} (${player.emoji}) 的回合記錄 (總步數: ${player.currentTotalSteps}, 總點數: ${player.currentTotalScore})</th></tr>
                     <tr>
                         <th>步數</th>
                         <th>點數</th>
@@ -964,7 +906,7 @@
                 <tbody></tbody>
             `;
 
-            tableContainer.appendChild(table); // 🎯 修正: 將 table 加入 tableContainer
+            tableContainer.appendChild(table); 
             individualScoreContainer.appendChild(tableContainer);
         }
 
@@ -982,7 +924,6 @@
             newRow.insertCell().textContent = steps;  
             newRow.insertCell().textContent = points;  
         }
-
     </script>
 </body>
 </html>
